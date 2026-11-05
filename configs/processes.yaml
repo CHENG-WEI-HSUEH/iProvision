@@ -1,0 +1,20 @@
+# 可以用名字啟動的程式。每個子行程都是 so_runner 載入這裡指定的 .so。
+#
+#   start <program> [options...]          啟動一個實例，名字和程式名相同
+#   start <name> <program> [args...]      再開一個實例，額外參數接在後面
+#   start <name> <path/to/lib.so> [args]  直接載入任何有 plugin_main 的 .so
+#
+# 相對路徑以這個檔案所在的資料夾（configs/）為基準。
+# library:     要載入的 .so（必填）
+# working_dir: 子行程的工作目錄（選填，預設是管理器目前的目錄）
+# args:        預設參數（選填）
+
+programs:
+  isurgical:
+    library: ../build/libisurgical_plugin.so      # 包裝 lib/libisurgical.so
+    working_dir: ..                               # 專案根目錄：使用這裡的 data/ 和 configs/
+    args: ["--config", "configs/isurgical_config.yaml"]   # 例如再加 "--show", "--windowed"
+
+  test:
+    library: ../build/libtest_plugin.so          # 測試用：每秒印一行，不需要 GPU
+    args: ["1"]                                   # 間隔秒數

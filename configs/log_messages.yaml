@@ -1,0 +1,259 @@
+# Log message catalogue. Every log line of the manager, so_runner and the plugins comes from here:
+#
+#   <timestamp> [level] [code] [module] [function] <description>
+#   2026-11-04 16:29:59.123 [info] [2001] [manager] [Start] started 't1' (pid 1234), log: /.../logs/t1.log
+#
+# Each message (the key, e.g. MGR_STARTED, is the id used in the source code: APP_LOG("MGR_STARTED", ...)):
+#   code:        [code], any text
+#   level:       [level], info / warning / error
+#   module:      [module], any text
+#   description: the text; {name}, {pid} ... are filled in by the program (the available ones are listed per message)
+#   function:    optional; overrides [function] (default = the C++ function that wrote the line)
+#
+# Edit the text freely, but keep the ids and placeholder names. Changes apply the next time the program starts
+# (child processes read this file when they start).
+
+settings:
+  timestamp_format: "%Y-%m-%d %H:%M:%S"   # strftime() format
+  milliseconds: true                      # append .123 to the timestamp
+  min_level: info                         # lowest level written: info / warning / error
+  console: true                           # manager: also show log lines in the terminal
+  color: true                             # manager: warnings yellow, errors red in the terminal
+  manager_log_file: ../logs/manager.log   # manager: log file ("" = none); relative to this folder
+                                          # child processes always write to logs/<name>.log
+
+messages:
+  # ---------------------------------------------------------------- 1xxx console (command line interface)
+  CONSOLE_READY:                  # {count} {path}
+    code: 1001
+    level: info
+    module: console
+    description: "process manager ready - {count} programs from {path}; type 'help' for commands"
+  CONSOLE_PROGRAMS_UNAVAILABLE:   # {path}
+    code: 1002
+    level: warning
+    module: console
+    description: "no programs loaded from {path} - only 'start <name> <lib.so>' is available"
+  CONSOLE_UNKNOWN_COMMAND:        # {command}
+    code: 1003
+    level: warning
+    module: console
+    description: "unknown command '{command}' (see 'help')"
+  CONSOLE_MISSING_NAME:           # {command}
+    code: 1004
+    level: warning
+    module: console
+    description: "missing name - usage: {command} <name>|all (see 'help')"
+  CONSOLE_UNKNOWN_PROGRAM:        # {name} {path}
+    code: 1005
+    level: warning
+    module: console
+    description: "'{name}' is not a program in {path}"
+  CONSOLE_SHUTDOWN:               # (none)
+    code: 1006
+    level: info
+    module: console
+    description: "stopping all processes... (Ctrl+C again to kill them now)"
+  CONSOLE_EXIT:                   # (none)
+    code: 1007
+    level: info
+    module: console
+    description: "process manager exited"
+
+  # ---------------------------------------------------------------- 2xxx manager (ProcessManager)
+  MGR_STARTED:                    # {name} {pid} {log}
+    code: 2001
+    level: info
+    module: manager
+    description: "started '{name}' (pid {pid}), log: {log}"
+  MGR_NOT_FOUND:                  # {name}
+    code: 2002
+    level: error
+    module: manager
+    description: "no process named '{name}'"
+  MGR_INVALID_NAME:               # {name} {max}
+    code: 2003
+    level: error
+    module: manager
+    description: "invalid name '{name}': use 1-{max} characters of [A-Za-z0-9_-]"
+  MGR_ALREADY_RUNNING:            # {name}
+    code: 2004
+    level: error
+    module: manager
+    description: "'{name}' is already running"
+  MGR_STILL_RUNNING:              # {name}
+    code: 2005
+    level: error
+    module: manager
+    description: "'{name}' is still running; stop it first"
+  MGR_PAUSED:                     # {name}
+    code: 2006
+    level: info
+    module: manager
+    description: "paused '{name}'"
+  MGR_RESUMED:                    # {name}
+    code: 2007
+    level: info
+    module: manager
+    description: "resumed '{name}'"
+  MGR_STOPPING:                   # {name}
+    code: 2008
+    level: info
+    module: manager
+    description: "stopping '{name}'..."
+  MGR_EXITED:                     # {name} {code}
+    code: 2009
+    level: info
+    module: manager
+    description: "'{name}' exited with code {code}"
+  MGR_REMOVED:                    # {name}
+    code: 2010
+    level: info
+    module: manager
+    description: "removed '{name}'"
+  MGR_STOPPING_ALL:               # {count}
+    code: 2011
+    level: info
+    module: manager
+    description: "stopping {count} running processes..."
+  MGR_KILLED:                     # {name} {timeout_ms}
+    code: 2012
+    level: warning
+    module: manager
+    description: "'{name}' did not exit within {timeout_ms} ms; sent SIGKILL"
+
+  # ---------------------------------------------------------------- 3xxx process (ManagedProcess)
+  PROC_ALREADY_STARTED:           # {name}
+    code: 3001
+    level: error
+    module: process
+    description: "'{name}' has already been started"
+  PROC_NOT_IN_PATH:               # {name} {exe}
+    code: 3002
+    level: error
+    module: process
+    description: "'{name}': '{exe}' not found in PATH"
+  PROC_NOT_EXECUTABLE:            # {name} {exe} {reason}
+    code: 3003
+    level: error
+    module: process
+    description: "'{name}': cannot execute {exe}: {reason}"
+  PROC_LOG_OPEN_FAILED:           # {name} {log} {reason}
+    code: 3004
+    level: error
+    module: process
+    description: "'{name}': cannot open log {log}: {reason}"
+  PROC_SPAWN_FAILED:              # {name} {exe} {reason}
+    code: 3005
+    level: error
+    module: process
+    description: "'{name}': cannot start {exe}: {reason}"
+  PROC_NOT_RUNNING:               # {name}
+    code: 3006
+    level: error
+    module: process
+    description: "'{name}' is not running"
+  PROC_IS_STOPPING:               # {name}
+    code: 3007
+    level: error
+    module: process
+    description: "'{name}' is stopping"
+  PROC_SIGNAL_FAILED:             # {name} {signal} {reason}
+    code: 3008
+    level: error
+    module: process
+    description: "'{name}': cannot send {signal}: {reason}"
+  PROC_STATE_TIMEOUT:             # {name} {action}
+    code: 3009
+    level: error
+    module: process
+    description: "'{name}' did not {action} in time"
+
+  # ---------------------------------------------------------------- 4xxx config (processes.yaml)
+  CFG_LOADED:                     # {count} {path}
+    code: 4001
+    level: info
+    module: config
+    description: "loaded {count} programs from {path}"
+  CFG_PARSE_FAILED:               # {path} {reason}
+    code: 4002
+    level: error
+    module: config
+    description: "{path}: {reason}"
+  CFG_NO_PROGRAMS:                # {path}
+    code: 4003
+    level: error
+    module: config
+    description: "{path}: missing 'programs:' map"
+  CFG_NO_LIBRARY:                 # {path} {name}
+    code: 4004
+    level: error
+    module: config
+    description: "{path}: program '{name}' has no 'library' (.so to load)"
+
+  # ---------------------------------------------------------------- 5xxx runner (so_runner, inside the child)
+  RUNNER_USAGE:                   # (none)
+    code: 5001
+    level: error
+    module: runner
+    description: "usage: so_runner <library.so> [args...]"
+  RUNNER_LOADING:                 # {library} {pid} {args}
+    code: 5002
+    level: info
+    module: runner
+    description: "pid {pid}: loading {library} {args}"
+  RUNNER_LOAD_FAILED:             # {library} {reason}
+    code: 5003
+    level: error
+    module: runner
+    description: "cannot load {library}: {reason}"
+  RUNNER_NO_ENTRY:                # {library} {entry} {reason}
+    code: 5004
+    level: error
+    module: runner
+    description: "{library} has no {entry}(): {reason}"
+  RUNNER_FINISHED:                # {library} {code}
+    code: 5005
+    level: info
+    module: runner
+    description: "{library} returned {code}"
+
+  # ---------------------------------------------------------------- 6xxx plugins (inside the child)
+  TEST_STARTED:                   # {pid} {interval}
+    code: 6001
+    level: info
+    module: test_plugin
+    description: "test plugin started: pid {pid}, interval {interval} s"
+  TEST_TICK:                      # {tick}
+    code: 6002
+    level: info
+    module: test_plugin
+    description: "tick {tick}"
+  TEST_STOPPED:                   # {tick}
+    code: 6003
+    level: info
+    module: test_plugin
+    description: "SIGTERM received after {tick} ticks, exiting cleanly"
+  ISURGICAL_BAD_ARGS:             # {args}
+    code: 6101
+    level: error
+    module: isurgical_plugin
+    description: "invalid isurgical options: {args}"
+  ISURGICAL_STARTING:             # {args}
+    code: 6102
+    level: info
+    module: isurgical_plugin
+    description: "starting isurgical {args}"
+  ISURGICAL_FINISHED:             # {code}
+    code: 6103
+    level: info
+    module: isurgical_plugin
+    description: "isurgical finished with code {code}"
+
+  # ---------------------------------------------------------------- 9xxx log system
+  LOG_UNKNOWN_ID:                 # {id} {params}
+    code: 9002
+    level: error
+    module: log
+    description: "unknown log id '{id}' {params}"
+  # 9001 (catalogue cannot be loaded) is built into src/log/app_log.cpp, because this file is unavailable then.

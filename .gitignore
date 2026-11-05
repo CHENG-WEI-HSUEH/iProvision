@@ -1,0 +1,29 @@
+# Build output (main project and test project)
+build/
+build-test/
+build-*/
+
+# Runtime logs (manager.log and <name>.log of every child process)
+logs/
+
+# Models and videos: too large for GitHub (> 100 MB) and the video may contain patient data
+data/
+
+# Generated test reports (recreate with test/run_tests.sh)
+test/reports/
+
+# Symlinks recreated by CMake at configure time (only lib/libisurgical.so.0.1.0 is tracked)
+lib/libisurgical.so
+lib/libisurgical.so.0
+
+# Coverage / editor / OS clutter
+*.gcda
+*.gcno
+*.gcov
+*.gcov.json.gz
+__pycache__/
+.vscode/
+.idea/
+.cache/
+compile_commands.json
+.DS_Store
